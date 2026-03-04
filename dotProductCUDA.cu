@@ -9,7 +9,7 @@
 
 
 // ---------------- CUDA Kernel ----------------
-__global__ void dotProductKernel(double *A, double *B, double *C, long N)
+__global__ void dotProductKernel(double *A, double *B, double *C, long n)
 {
     __shared__ double cache[THREADS_PER_BLOCK];
 
@@ -18,7 +18,7 @@ __global__ void dotProductKernel(double *A, double *B, double *C, long N)
 
     double temp = 0.0;
 
-    while (tid < N)
+    while (tid < n)
     {
         temp += A[tid] * B[tid];
         tid += blockDim.x * gridDim.x;
@@ -45,12 +45,12 @@ __global__ void dotProductKernel(double *A, double *B, double *C, long N)
 
 
 // ---------------- OpenMP Function ----------------
-double dotProductOMP(double *A, double *B, long N)
+double dotProductOMP(double *A, double *B, long n)
 {
     double sum = 0.0;
 
 #pragma omp parallel for reduction(+:sum)
-    for(long i = 0; i < N; i++)
+    for(long i = 0; i < n; i++)
     {
         sum += A[i] * B[i];
     }
@@ -60,7 +60,7 @@ double dotProductOMP(double *A, double *B, long N)
 
 
 // ---------------- CUDA Function ----------------
-double dotProductCUDA(double *A, double *B, long N)
+double dotProductCUDA(double *A, double *B, long n)
 {
     double *d_A, *d_B, *d_C;
     double *h_C;
@@ -145,4 +145,5 @@ int main()
     delete[] B;
 
     return 0;
+
 }
